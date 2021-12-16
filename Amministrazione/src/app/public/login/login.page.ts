@@ -48,7 +48,6 @@ export class LoginPage implements OnInit {
       httpHeaders: this.request.createHeader(),
 
       handler:(token)=>{
-        console.log(token)
         this.authService.login(token["access_token"])
       },
 

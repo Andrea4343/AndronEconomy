@@ -96,7 +96,6 @@ validRequest = {
         ("foto", True),
         ("prezzo", True),
         ("categoria", True),
-        ("tipo", True),
         ("quantita", True)
     ],
     "addProductQuantity": [("quantita",True)],
@@ -148,12 +147,14 @@ validRequest = {
 }
 
 def checkData(data,validation):
-    if data==None or not bool(data):
+    if data is None or not bool(data):
         return False
     for v in validation:
         campo = data.get(v[0], None)
-
-        if campo == None or (v[1] and campo!=None and str(campo).replace(" ","") == ""):#and  (v[2].get("min")< len(campo) or len(campo) > v[2].get("min") ):
+        if campo is None or (
+            v[1] and campo != None and str(campo).replace(" ", "") == ""
+        ):#and  (v[2].get("min")< len(campo) or len(campo) > v[2].get("min") ):
+            print(v[0])
             return False
     return True
 
@@ -166,8 +167,7 @@ def createResponse(allowsMethods):
 
 def createSalt(length):
     letters_and_digits = string.ascii_letters + string.digits
-    salt = ''.join((random.choice(letters_and_digits) for i in range(length)))
-    return salt
+    return ''.join((random.choice(letters_and_digits) for i in range(length)))
 
 
 def getFileEncode(path,id):

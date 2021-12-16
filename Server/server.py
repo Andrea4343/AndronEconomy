@@ -135,30 +135,28 @@ def logout():
 def register():
     response = createResponse("POST")
     data = request.get_json()
+    print(checkData(data,validRequest["addImpresa"]))
     db = DB()
-    print(data)
     try:
-        if  db.connetti(acommit=False):
-            query = Query(db.getCursor())
-            result = False
-
-            if data["_accountType"]=="impresa" and checkData(data, validRequest["addImpresa"]):
-                result = query.addImpresa(data)
-
-            elif data["_accountType"]=="utente" and checkData(data, validRequest["addUser"]):
-                result = query.addUser(data)
-
-            if result:
-                if not ( saveFile("proPic/", result, request.get_json()["_foto"]) and registerEmail(data["_mail"],data["_accountType"], {"nome" : data["_nome"]}) ):
-                    return response, 500
-                
-                db.getConnection().commit()
-                return response, 200
-            else:
-                response.set_data(json.dumps({"errore": result}))
-                return response, 401
-        else:
+        if not db.connetti(acommit=False):
             return response, 500
+        query = Query(db.getCursor())
+        result = False
+
+        if data["_accountType"]=="impresa" and checkData(data, validRequest["addImpresa"]):
+            result = query.addImpresa(data)
+
+        elif data["_accountType"]=="utente" and checkData(data, validRequest["addUser"]):
+            result = query.addUser(data)
+        if result:
+            if not ( saveFile("proPic/", result, request.get_json()["_foto"]) and registerEmail(data["_mail"],data["_accountType"], {"nome" : data["_nome"]}) ):
+                return response, 500
+
+            db.getConnection().commit()
+            return response, 200
+        else:
+            response.set_data(json.dumps({"errore": result}))
+            return response, 401
     except Exception as e:
         print(e)
         return response, 500
@@ -170,34 +168,33 @@ def getInfo():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            tipo=query.getUserType(get_jwt_identity())
-            data = False
-
-            if request.method=="PUT":
-                if not checkData(request.get_json(), validRequest["updateInfo"]):
-                    return response, 400 
-                if tipo == "utente":
-                    data = query.updateInfoUtente(get_jwt_identity(),request.get_json())
-            
-            elif request.method=="GET":        
-                if tipo == "utente":
-                    data = query.getInfoUtente(get_jwt_identity())
-
-                elif tipo == "impresa":
-                    data = query.getInfoImpresa(get_jwt_identity())
-
-                elif tipo == "ente":
-                    data = query.getInfoEnte(get_jwt_identity())
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        tipo=query.getUserType(get_jwt_identity())
+        data = False
+
+        if request.method=="PUT":
+            if not checkData(request.get_json(), validRequest["updateInfo"]):
+                return response, 400 
+            if tipo == "utente":
+                data = query.updateInfoUtente(get_jwt_identity(),request.get_json())
+
+        elif request.method=="GET":        
+            if tipo == "utente":
+                data = query.getInfoUtente(get_jwt_identity())
+
+            elif tipo == "impresa":
+                data = query.getInfoImpresa(get_jwt_identity())
+
+            elif tipo == "ente":
+                data = query.getInfoEnte(get_jwt_identity())
+
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -209,26 +206,25 @@ def updatePassword():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-            if request.method=="PUT":
-                if not checkData(request.get_json(), validRequest["updatePassword"]):
-                    return response, 400 
-
-                data = query.changePasswordUtente(get_jwt_identity(),request.get_json())
-
-            if data == 1:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            elif data == -1:
-                response.set_data(json.dumps(data))
-                return response, 401
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+        if request.method=="PUT":
+            if not checkData(request.get_json(), validRequest["updatePassword"]):
+                return response, 400 
+
+            data = query.changePasswordUtente(get_jwt_identity(),request.get_json())
+
+        if data == 1:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        elif data == -1:
+            response.set_data(json.dumps(data))
+            return response, 401
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -239,17 +235,16 @@ def updateProfilePicture():
     response = createResponse("PUT")
     db=DB()
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-
-            if request.get_json()["foto"]==None:
-                return response, 400
-
-            if not saveFile("proPic/", query.getUserId(get_jwt_identity()) , request.get_json()["foto"]):
-                return response, 500
-            return response, 200
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+
+        if request.get_json()["foto"] is None:
+            return response, 400
+
+        if not saveFile("proPic/", query.getUserId(get_jwt_identity()) , request.get_json()["foto"]):
+            return response, 500
+        return response, 200
     except Exception as e:
         print(e)
         return response, 500
@@ -270,9 +265,7 @@ def getSaldo():
                 response.set_data(json.dumps({"_msg": data}))
                 return response, 200
 
-            return response, 500
-        else:
-            return response, 500
+        return response, 500
     except Exception as e:
         print(e)
         return response, 500
@@ -295,9 +288,7 @@ def getTransazioni():
                 response.set_data(json.dumps({"_msg": data}))
                 return response, 200
 
-            return response, 500
-        else:
-            return response, 500
+        return response, 500
     except Exception as e:
         print(e)
         return response, 500
@@ -333,24 +324,23 @@ def myService():
     db= DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            username = get_jwt_identity()
-            data = False
-
-            if request.method == "GET":
-                data = query.getMyService(username)
-
-            elif request.method == "POST" and checkData(request.get_json(), validRequest["addService"]):
-                data = query.addService(username, request.get_json())
-            
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        username = get_jwt_identity()
+        data = False
+
+        if request.method == "GET":
+            data = query.getMyService(username)
+
+        elif request.method == "POST" and checkData(request.get_json(), validRequest["addService"]):
+            data = query.addService(username, request.get_json())
+
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -383,27 +373,26 @@ def myServiceDelete(id):
 def services():
     response = createResponse("GET")
     db= DB()
-    
+
     if not checkData(request.args, validRequest["getServices"]):
         return response, 400
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-
-            if request.args.get("filtro",False) == "false":
-                data = query.getServices(get_jwt_identity(),request.args)
-                
-            else:
-                data = query.getServicesFiltered(get_jwt_identity(),request.args)
-
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if request.args.get("filtro",False) == "false":
+            data = query.getServices(get_jwt_identity(),request.args)
+
+        else:
+            data = query.getServicesFiltered(get_jwt_identity(),request.args)
+
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -416,22 +405,21 @@ def servicesSpecific(id):
     db= DB()
     try:
 
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-            if request.method == "GET":
-                data = query.getServiceDetails(id)
-
-            elif request.method == "POST" and checkData(request.get_json(), validRequest["newRequest"]):
-                data = query.newRequest(get_jwt_identity() ,id, request.get_json())
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+        if request.method == "GET":
+            data = query.getServiceDetails(id)
+
+        elif request.method == "POST" and checkData(request.get_json(), validRequest["newRequest"]):
+            data = query.newRequest(get_jwt_identity() ,id, request.get_json())
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -446,17 +434,16 @@ def myRequests():
     db= DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = query.getMyRequests(get_jwt_identity())
-
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = query.getMyRequests(get_jwt_identity())
+
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
+
     except Exception as e:
         print(e)
         return response, 500
@@ -468,25 +455,24 @@ def myRequestUpdate(id):
     db= DB()
 
     try:
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-            if request.method == "DELETE":
-                data = query.deleteMyRequest(get_jwt_identity(), id)
-
-            if request.method == "PUT" and checkData(request.get_json(), validRequest["updateMyRequest"]):
-                data = query.updateMyRequest(get_jwt_identity(), id, request.get_json().get("_stato"))
-            
-            if request.method == "POST" and checkData(request.get_json(), validRequest["confirmMyRequest"]):
-                data = query.confirmRequest(get_jwt_identity(), id, request.get_json())
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+        if request.method == "DELETE":
+            data = query.deleteMyRequest(get_jwt_identity(), id)
+
+        if request.method == "PUT" and checkData(request.get_json(), validRequest["updateMyRequest"]):
+            data = query.updateMyRequest(get_jwt_identity(), id, request.get_json().get("_stato"))
+
+        if request.method == "POST" and checkData(request.get_json(), validRequest["confirmMyRequest"]):
+            data = query.confirmRequest(get_jwt_identity(), id, request.get_json())
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -498,16 +484,15 @@ def myServiceRequests():
     db= DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = query.getMyServiceRequest(get_jwt_identity())
-
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = query.getMyServiceRequest(get_jwt_identity())
+
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -527,23 +512,22 @@ def report():
         if not checkData(data, validRequest["report"]):
             return response, 400
 
-        if db.connetti(False):
-            query = Query(db.getCursor())
-            result = False 
-            
-            if data["_tipo"] == "servizio":
-                result = query.newSegnalazioneServizio(get_jwt_identity(), data)
-
-            elif data ["_tipo"] == "ordine":
-                result = query.newSegnalazioneOrdine(get_jwt_identity(), data)
-
-            if result != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query = Query(db.getCursor())
+        result = False 
+
+        if data["_tipo"] == "servizio":
+            result = query.newSegnalazioneServizio(get_jwt_identity(), data)
+
+        elif data ["_tipo"] == "ordine":
+            result = query.newSegnalazioneOrdine(get_jwt_identity(), data)
+
+        if result != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -557,27 +541,26 @@ def myProdutcs():
     db= DB()
 
     try:
-        if db.connetti(False):
-            query= Query(db.getCursor())
-            username = get_jwt_identity()
-            data = False
-
-            if request.method == "GET":
-                data = query.getMyProducts(username)
-
-            elif request.method == "POST" and checkData(request.get_json().get("bene",None), validRequest["addProducts"]):
-                data = query.addProducts(username, request.get_json().get("bene",None))
-
-                if not saveFile("products/", data, request.get_json().get("bene",None)["foto"]):
-                    return response, 500
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query= Query(db.getCursor())
+        username = get_jwt_identity()
+        data = False
+
+        if request.method == "GET":
+            data = query.getMyProducts(username)
+            
+        elif request.method == "POST" and checkData(request.get_json(), validRequest["addProducts"]):
+            data = query.addProducts(username, request.get_json())
+
+            if not saveFile("products/", data, request.get_json()["foto"]):
+                return response, 500
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -589,23 +572,21 @@ def myProductsSpecific(id):
     db= DB()
 
     try:
-        if db.connetti():
-
-            query=Query(db.getCursor())
-            username = get_jwt_identity()
-            data = False
-            if request.method == "DELETE":
-                data = query.deleteProducts(username, id)
-
-            elif request.method == "PUT" and checkData(request.get_json(), validRequest["addProductQuantity"]):
-                data = query.addProductQuantity(username, id, request.get_json().get("quantita"))
-
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        username = get_jwt_identity()
+        data = False
+        if request.method == "DELETE":
+            data = query.deleteProducts(username, id)
+
+        elif request.method == "PUT" and checkData(request.get_json(), validRequest["addProductQuantity"]):
+            data = query.addProductQuantity(username, id, request.get_json().get("quantita"))
+
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -618,36 +599,35 @@ def products():
     db= DB()
 
     try:
-        if db.connetti(False):
-            query = Query(db.getCursor())
-            username = get_jwt_identity()
-            data = False
-
-            if request.method == "GET" and checkData(request.args, validRequest["getProducts"]):
-
-                if request.args.get("filtro",False) == "false":
-                    data = query.getProducts(username, request.args)
-                else:
-                    data = query.getProductsFiltered(get_jwt_identity(),request.args)
-
-            elif request.method == "POST": #!! NON CI SONO CONTROLLI SUI DATI INVIATI!!!
-                data = query.buyProducts(get_jwt_identity(), request.get_json().get("_ordine", None))
-
-            print(type(data) is dict and data.get("status", None) == -1)
-            if type(data) is dict and data.get("status", None) == -1:
-                db.getConnection().rollback()
-                response.set_data(json.dumps(data))
-                return response,400
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-
-            db.getConnection().rollback()
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query = Query(db.getCursor())
+        username = get_jwt_identity()
+        data = False
+
+        if request.method == "GET" and checkData(request.args, validRequest["getProducts"]):
+
+            if request.args.get("filtro",False) == "false":
+                data = query.getProducts(username, request.args)
+            else:
+                data = query.getProductsFiltered(get_jwt_identity(),request.args)
+
+        elif request.method == "POST": #!! NON CI SONO CONTROLLI SUI DATI INVIATI!!!
+            data = query.buyProducts(get_jwt_identity(), request.get_json())
+
+        print(type(data) is dict and data.get("status", None) == -1)
+        if type(data) is dict and data.get("status", None) == -1:
+            db.getConnection().rollback()
+            response.set_data(json.dumps(data))
+            return response,400
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+
+        db.getConnection().rollback()
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -661,15 +641,14 @@ def orders():
     db= DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = query.getOrders(get_jwt_identity())
-            if data != False:
-                response.set_data(json.dumps({"_msg": data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = query.getOrders(get_jwt_identity())
+        if data != False:
+            response.set_data(json.dumps({"_msg": data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -752,25 +731,24 @@ def feedback():
     db= DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-
-            if not checkData(request.args, validRequest["feedback"]):
-                return response, 400
-
-            if request.args.get("tipo") == "utente":
-                data = query.feedbackUser(request.args)
-
-            elif request.args.get("tipo") == "impresa":
-                data = query.feedbackCompany(request.args)
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not checkData(request.args, validRequest["feedback"]):
+            return response, 400
+
+        if request.args.get("tipo") == "utente":
+            data = query.feedbackUser(request.args)
+
+        elif request.args.get("tipo") == "impresa":
+            data = query.feedbackCompany(request.args)
+
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(traceback.format_exc())
         return response, 500
@@ -806,25 +784,24 @@ def communityServices():
     db = DB()
 
     try:
-        if db.connetti(False):
-            query= Query(db.getCursor())
-            data= False
-
-            if request.method == "GET":
-                data = query.getServiceCommunity(get_jwt_identity(),request.args)
-
-            if request.method == "POST" and checkData(request.get_json(), validRequest["postServiceComunity"]):
-                data = query.addServiceCommunity(get_jwt_identity(), request.get_json())
-                if not saveFile("comunityService/", data, request.get_json()["foto"]):
-                    return response, 500
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg":data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query= Query(db.getCursor())
+        data= False
+
+        if request.method == "GET":
+            data = query.getServiceCommunity(get_jwt_identity(),request.args)
+
+        if request.method == "POST" and checkData(request.get_json(), validRequest["postServiceComunity"]):
+            data = query.addServiceCommunity(get_jwt_identity(), request.get_json())
+            if not saveFile("comunityService/", data, request.get_json()["foto"]):
+                return response, 500
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg":data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500  
@@ -836,22 +813,21 @@ def updateCommunityServices(id):
     db = DB()
     print(id)
     try:
-        if db.connetti():
-            query= Query(db.getCursor())
-            data= False
-            
-            if request.method == "PUT":
-                data = query.confirmServiceCommunity(get_jwt_identity(),id)
-            
-            if request.method == "DELETE":
-                data = query.refuseServiceCommunity(get_jwt_identity(), id)
-
-            if data != False:
-                response.set_data(json.dumps({"_msg":data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query= Query(db.getCursor())
+        data= False
+
+        if request.method == "PUT":
+            data = query.confirmServiceCommunity(get_jwt_identity(),id)
+
+        if request.method == "DELETE":
+            data = query.refuseServiceCommunity(get_jwt_identity(), id)
+
+        if data != False:
+            response.set_data(json.dumps({"_msg":data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500 
@@ -862,29 +838,28 @@ def needs():
     response = createResponse("POST, GET")
     db= DB()
     try:
-        if db.connetti(acommit=False):
-            query= Query(db.getCursor())
-            data = False
-            
-            if request.method == "GET" and checkData(request.args, validRequest["getNeeds"]):
-                if(request.args.get("_all") == "True"):
-                    data = query.getAllNeeds()
-                else:
-                    data = query.getNeeds(request.args)  
-                
-            elif request.method == "POST" and checkData(request.get_json(), validRequest["postNeeds"]): 
-                data = query.addBisogno(get_jwt_identity(),request.get_json())
-                
-                if not saveFile("needs/", data, request.get_json()["allegati"]):
-                    return response, 500
-                
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps({"_msg":data}))
-                return response, 200
-            return response, 400
-        else:
+        if not db.connetti(acommit=False):
             return response, 500
+        query= Query(db.getCursor())
+        data = False
+
+        if request.method == "GET" and checkData(request.args, validRequest["getNeeds"]):
+            if(request.args.get("_all") == "True"):
+                data = query.getAllNeeds()
+            else:
+                data = query.getNeeds(request.args)  
+
+        elif request.method == "POST" and checkData(request.get_json(), validRequest["postNeeds"]): 
+            data = query.addBisogno(get_jwt_identity(),request.get_json())
+
+            if not saveFile("needs/", data, request.get_json()["allegati"]):
+                return response, 500
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps({"_msg":data}))
+            return response, 200
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500   
@@ -926,30 +901,33 @@ def garanteSettings():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                if request.get_json()["options"]=="andron":
-                    data = AndronCall.setting_update(Settings.ANDRON,request.get_json()["andron"])
-
-                if request.get_json()["options"]=="percentuale":
-                    data = AndronCall.setting_update(Settings.REWARD,request.get_json()["percentuale"])
-
-            elif request.method=="GET":        
-                data = AndronCall.getAll_asset(Assets.SETTINGS).get("message",False)
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method=="PUT":
+            if request.get_json()["options"]=="andron":
+                data = query.setAndronHour(request.get_json())#AndronCall.setting_update(Settings.ANDRON,request.get_json()["andron"])
+
+            if request.get_json()["options"]=="percentuale":
+                data = query.setPercentualeETS(request.get_json())#AndronCall.setting_update(Settings.REWARD,request.get_json()["percentuale"])
+
+        elif request.method=="GET":        
+            data = query.getSettings()#AndronCall.getAll_asset(Assets.SETTINGS).get("message",False)
+            data=json.loads(data) #!! Rimuovere Blockchain
+            data = [{"Record":{   #!! Rimuovere Blockchain
+                "andronGeneration" : data.get("andron"),
+                "rewardEts" : data.get("percentuale")
+            }}]
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -963,37 +941,33 @@ def accountManagementUser():
     db=DB()
 
     try:
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-            
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                data = query.activateAccount(request.args["id"]) 
-                nome = data.get("nome", False)
-                cognome = data.get("cognome", False)
-
-                if (not nome and not cognome):
-                    return response, 400
-                if not AndronCall.createUser(request.args["id"],AccountType.USER,nome,cognome):
-                    raise Exception()
-
-            elif request.method=="DELETE":
-                data = query.refuseAccount(request.args["id"])
-            
-            elif request.method=="GET":        
-                data = query.userToActivate()
-            
-            if data != False:
-                response.set_data(json.dumps(data))
-                db.getConnection().commit()
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method == "DELETE":
+            data = query.refuseAccount(request.args["id"])
+
+        elif request.method == "GET":
+            data = query.userToActivate()
+
+        elif request.method == "PUT":
+            data = query.activateAccount(request.args["id"])
+            nome = data.get("nome", False)
+            cognome = data.get("cognome", False)
+
+            if (not nome and not cognome):
+                return response, 400
+        if data != False:
+            response.set_data(json.dumps(data))
+            db.getConnection().commit()
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1005,35 +979,32 @@ def accountManagementEts():
     db=DB()
 
     try:
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-            dati =request.get_json()
-
-            if dati["_accountType"]=="ente" and checkData(dati, validRequest["addEnte"]):
-                data = query.addEnte(dati)
-
-            if data != False:
-                nome = dati.get("_username", False)
-                cognome = dati.get("_nome", False)
-                if (not nome and not cognome):
-                    return response, 400
-                if not AndronCall.createUser(data,AccountType.ETS,nome,cognome):
-                    raise Exception()
-
-                if not garanteRegisterEmail(dati["_email"],"ente",{ "nome": dati["_nome"], "password": dati["_password"] }):
-                    return response, 500
-                db.getConnection().commit()
-                response.set_data(json.dumps(data))
-                return response, 200
-            
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        dati =request.get_json()
+
+        if dati["_accountType"]=="ente" and checkData(dati, validRequest["addEnte"]):
+            data = query.addEnte(dati)
+        if data != False:
+            nome = dati.get("_username", False)
+            cognome = dati.get("_nome", False)
+            if (not nome and not cognome):
+                return response, 400
+            #if not AndronCall.createUser(data,AccountType.ETS,nome,cognome):
+            #    raise Exception()
+            if not garanteRegisterEmail(dati["_email"],"ente",{ "nome": dati["_nome"], "password": dati["_password"] }):
+                return response, 500
+            db.getConnection().commit()
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1045,52 +1016,51 @@ def accountManagementImpresa():
     db=DB()
 
     try:
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                data = query.activateImpresa(request.args["id"])
-                identificativo = data
-                nome = data.get("username", False)
-                cognome = data.get("nome", False)
-                if (not nome and not cognome):
-                    return response, 400
-
-            elif request.method=="DELETE":
-                data = query.refuseImpresa(request.args["id"])
-            
-            elif request.method=="GET":        
-                data = query.impresaToActivate()
-            
-            elif request.method=="POST":
-                dati = request.get_json()
-                if dati["_accountType"]=="impresa" and checkData(dati, validRequest["addImpresa"]):
-                    data = query.addImpresa(dati,1)
-                    identificativo = data
-                    nome = dati["_username"]
-                    cognome = dati["_nome"]
-                if not data:
-                    response.set_data(json.dumps({"errore": data}))
-                    return response, 401 
-                if not garanteRegisterEmail(dati["_mail"],"impresa",{ "nome": dati["_nome"], "password": dati["_password"] }):
-                    return response, 500
-            
-            if (request.method=="POST" or request.method=="PUT") and data!= False:
-                if not AndronCall.createUser(identificativo,AccountType.IMPRESA,nome,cognome):
-                    raise Exception()
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                db.getConnection().commit()
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method=="PUT":
+            data = query.activateImpresa(request.args["id"])
+            identificativo = data
+            nome = data.get("username", False)
+            cognome = data.get("nome", False)
+            if (not nome and not cognome):
+                return response, 400
+
+        elif request.method=="DELETE":
+            data = query.refuseImpresa(request.args["id"])
+
+        elif request.method=="GET":        
+            data = query.impresaToActivate()
+
+        elif request.method=="POST":
+            dati = request.get_json()
+            if dati["_accountType"]=="impresa" and checkData(dati, validRequest["addImpresa"]):
+                data = query.addImpresa(dati,1)
+                identificativo = data
+                nome = dati["_username"]
+                cognome = dati["_nome"]
+            if not data:
+                response.set_data(json.dumps({"errore": data}))
+                return response, 401 
+            if not garanteRegisterEmail(dati["_mail"],"impresa",{ "nome": dati["_nome"], "password": dati["_password"] }):
+                return response, 500
+
+        #if (request.method=="POST" or request.method=="PUT") and data!= False:
+        #    if not AndronCall.createUser(identificativo,AccountType.IMPRESA,nome,cognome):
+        #        raise Exception()
+
+        if data != False:
+            response.set_data(json.dumps(data))
+            db.getConnection().commit()
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1105,27 +1075,26 @@ def approveServices():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-            
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                data = query.activateService(request.args["id"])
-            elif request.method=="DELETE":
-                data = query.refuseService(request.args["id"]) 
-            elif request.method=="GET":        
-                data = query.servicesToactivate()
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method == "DELETE":
+            data = query.refuseService(request.args["id"])
+        elif request.method == "GET":
+            data = query.servicesToactivate()
+
+        elif request.method == "PUT":
+            data = query.activateService(request.args["id"])
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1137,28 +1106,27 @@ def approveNeeds():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-
-            if request.method=="PUT":
-                data = query.activateNeed(request.args["id"])
-            elif request.method=="DELETE":
-                data = query.refuseNeed(request.args["id"]) 
-            elif request.method=="GET":        
-                data = query.needsToactivate()
-                
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+
+        if request.method == "DELETE":
+            data = query.refuseNeed(request.args["id"])
+        elif request.method == "GET":
+            data = query.needsToactivate()
+
+        elif request.method == "PUT":
+            data = query.activateNeed(request.args["id"])
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1170,29 +1138,28 @@ def approveProducts():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-
-            if not query.isAdmin("id"):
-                return response, 401
-            data = False
-
-            if request.method=="PUT":
-                data = query.activateProduct(request.args["id"])
-
-            elif request.method=="DELETE":
-                data = query.refuseProduct(request.args["id"]) 
-
-            elif request.method=="GET":        
-                data = query.productsToactivate()
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+
+        if not query.isAdmin("id"):
+            return response, 401
+        data = False
+
+        if request.method == "DELETE":
+            data = query.refuseProduct(request.args["id"]) 
+
+        elif request.method == "GET":
+            data = query.productsToactivate()
+
+        elif request.method == "PUT":
+            data = query.activateProduct(request.args["id"])
+
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1207,31 +1174,30 @@ def managementServicesReport():
     db=DB()
 
     try:
-        if db.connetti(False):
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                dati = request.get_json()
-                if dati["operazione"]=="concludi":
-                    data = query.concludiSegnalazioneServizio(dati["idRichiesta"],dati["idEsponente"])
-                if dati["operazione"]=="rimborso":
-                    data = query.rimborsaSegnalazioneServizio(dati["idRichiesta"],dati["idRichiedente"])
-
-            elif request.method=="GET":        
-                data = query.getReportUsers()
-
-            if data != False:
-                db.getConnection().commit()
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti(False):
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method=="PUT":
+            dati = request.get_json()
+            if dati["operazione"]=="concludi":
+                data = query.concludiSegnalazioneServizio(dati["idRichiesta"],dati["idEsponente"])
+            if dati["operazione"]=="rimborso":
+                data = query.rimborsaSegnalazioneServizio(dati["idRichiesta"],dati["idRichiedente"])
+
+        elif request.method=="GET":        
+            data = query.getReportUsers()
+
+        if data != False:
+            db.getConnection().commit()
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500
@@ -1243,30 +1209,29 @@ def managementOrdersReport():
     db=DB()
 
     try:
-        if db.connetti():
-            query=Query(db.getCursor())
-            data = False
-
-            if not query.isAdmin("id"):
-                return response, 401
-
-            if request.method=="PUT":
-                dati = request.get_json()
-                if dati["operazione"]=="concludi":
-                    data = query.concludiSegnalazioneOrdine(dati["idOrdine"],dati["idSegnalazione"])
-                if dati["operazione"]=="rimborso":
-                    data = query.rimborsaSegnalazioneOrdine(dati["idSegnalatore"],dati["idImpresa"],dati["idOrdine"],dati["idSegnalazione"],dati["idTransazione"])
-
-            elif request.method=="GET":        
-                data = query.getReportOrders()
-
-            if data != False:
-                response.set_data(json.dumps(data))
-                return response, 200
-
-            return response, 400
-        else:
+        if not db.connetti():
             return response, 500
+        query=Query(db.getCursor())
+        data = False
+
+        if not query.isAdmin("id"):
+            return response, 401
+
+        if request.method=="PUT":
+            dati = request.get_json()
+            if dati["operazione"]=="concludi":
+                data = query.concludiSegnalazioneOrdine(dati["idOrdine"],dati["idSegnalazione"])
+            if dati["operazione"]=="rimborso":
+                data = query.rimborsaSegnalazioneOrdine(dati["idSegnalatore"],dati["idImpresa"],dati["idOrdine"],dati["idSegnalazione"],dati["idTransazione"])
+
+        elif request.method=="GET":        
+            data = query.getReportOrders()
+
+        if data != False:
+            response.set_data(json.dumps(data))
+            return response, 200
+
+        return response, 400
     except Exception as e:
         print(e)
         return response, 500

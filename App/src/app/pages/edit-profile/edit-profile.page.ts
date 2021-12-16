@@ -258,8 +258,7 @@ export class EditProfilePage {
               this.errorep="Le password non coincidono"
               return 
             }
-            return 
-            this.request.put({
+            return this.request.put({
               path:"/info/changePassword",
               data:{
                 "_oldpsw": data.vecchiapassword,

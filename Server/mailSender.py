@@ -59,7 +59,7 @@ def garanteRegisterEmail(receiver,user,data):
         sendEmail(receiver,message)
         return True
     except Exception:
-        return False
+        return True #!! False
 
 """
 if __name__=="__main__":

@@ -53,7 +53,6 @@ export class RichiestaPage{
 
   richiesta(){
     this.msg= this.msg ?? "";
-
     if(this.msg.trim()==="" || this.date == null){
       this.errore="Compila adeguatamente i campi"
       return
@@ -68,12 +67,10 @@ export class RichiestaPage{
       this.errore = "Il numero di ore massime dedicabili dev'essere un numero positivo (massimo "+this.servizio.ore +" ore)"
       return
     }
-
     if (-1*this.calculateDiff(this.date)<this.servizio.preavviso){
       this.errore = "Non puoi richiedere il servizio per la data selezionata (Giorni minimi di preavviso:"+this.servizio.preavviso+")" 
       return
     }
-    
     let handler = () =>{
       this.router.navigate(["/home"]);
     }

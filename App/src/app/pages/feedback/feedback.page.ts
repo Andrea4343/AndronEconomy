@@ -26,7 +26,6 @@ export class FeedbackPage {
 
 
   async servizioEseguito(id: number) {
-    
     if (!(this.msg && this.valutazione)){
       this.errore="Compila tutti i campi"
       return
@@ -48,7 +47,7 @@ export class FeedbackPage {
       message:     "Vuoi confermare questo servizio?",
       handlerYes : () => {
         this.request.post({
-          path:"/request/mine/"+id,
+          path:"/requests/mine/"+id,
           data: {
             "_msg": this.msg,
             "_valutazione" : this.valutazione
@@ -72,7 +71,6 @@ export class FeedbackPage {
 
 
   async confermaOrdine(dati:any){
-    
     if (!(this.msg && this.valutazione)){
       this.errore="Compila tutti i campi"
       return
@@ -93,7 +91,7 @@ export class FeedbackPage {
       header:      "Attenzione",
       message:     "Vuoi confermare questo ordine?",
       handlerYes : () => {
-        this.request.post({
+        this.request.put({
           path:"/orders/mine/"+this.data.id,
           data: {
             "_a": this.data.nodoImpresa,

@@ -29,8 +29,8 @@ export class NuovoServizioPage{
   }
 
   newServiceForm = this.formBuilder.group({
-    nome: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(5)], this.utilities.validatorNotEmpty],
-    descrizione: ['', [Validators.required, Validators.maxLength(500), Validators.minLength(5)], this.utilities.validatorNotEmpty],
+    nome: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(5), this.utilities.validatorNotEmpty]],
+    descrizione: ['', [Validators.required, Validators.maxLength(500), Validators.minLength(5), this.utilities.validatorNotEmpty]],
     ore: ['', [Validators.required, Validators.max(5), Validators.min(1),Validators.pattern("^[0-9]+$")]],
     preavviso: ['', [Validators.required,Validators.max(14), Validators.min(1), Validators.pattern("^[0-9]+$"),]],
   })
@@ -60,7 +60,12 @@ export class NuovoServizioPage{
     ],
   }
 
-  constructor(private navCtrl: NavController, private request: RequestService, private utilities: UtilitiesService, private formBuilder: FormBuilder) {}
+  constructor(private navCtrl: NavController, private request: RequestService, private utilities: UtilitiesService, private formBuilder: FormBuilder) {
+  }
+
+  test(){
+    console.log(this.newServiceForm.valid)
+  }
 
   submit(){
     let servizio = {

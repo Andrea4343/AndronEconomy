@@ -269,7 +269,7 @@ export class RegisterImpresaPage {
       _password:      this.registerImpresaForm.value.password,
       _nome:          this.registerImpresaForm.value.nome,
       _tipo :         this.registerImpresaForm.value.tipo,
-      _iva :          this.registerImpresaForm.value.iva,
+      _iva :          this.registerImpresaForm.value.piva,
       _cf:            this.registerImpresaForm.value.cf.toUpperCase(),
       _telefono:      this.registerImpresaForm.value.telefono,
       _mail:          this.registerImpresaForm.value.email,
@@ -281,7 +281,7 @@ export class RegisterImpresaPage {
       _accountType :  "impresa",
       _foto:          this.foto
     }
-
+    console.log(data)
     
     this.request.post({
       path:"/register",

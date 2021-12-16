@@ -55,13 +55,13 @@ class Query:
         self._cursor.execute("SELECT salt, tipo FROM Login WHERE username = %s",(username))
         login = (self._cursor.fetchone())
 
-        if login == None: 
+        if login is None: 
             return "0"
-        
+
         salt = login["salt"]
         self._cursor.execute("select username from Login where pass=md5(%s)",(data["password"]+salt))
         check=self._cursor.fetchone()
-        if check == None:
+        if check is None:
             return "0"
         check=check.get("username", None)
         if username == check:
@@ -121,6 +121,9 @@ class Query:
             (lastid, data["_nome"], data["_cf"], data["_tipo"] ,data["_telefono"],data["_mail"] ,data["_iva"],data["_stato"],data["_regione"],data["_citta"],data["_via"],data["_cap"],attivo)
         )
 
+        if attivo:
+            self._cursor.execute("INSERT INTO Saldo (id, andron) VALUES (%s,%s)", (lastid, self.getAndronHour())) # Da togliere nella versione con blockchain
+
 
         return lastid
 
@@ -132,14 +135,14 @@ class Query:
             return 0 
         
         salt= createSalt(10)
-        print(data)
         self._cursor.execute(
             "INSERT INTO `Login` (`username`, `pass`,`salt`, `tipo`) VALUES (%s, md5(%s), %s, 'ente')",
             (data["_username"], data["_password"]+salt ,salt)
         )
     
         lastid=self._cursor.lastrowid
-        
+        self._cursor.execute("INSERT INTO Saldo (id, andron) VALUES (%s,%s)", (lastid, self.getAndronHour())) # Da togliere nella versione con blockchain
+
         self._cursor.execute("INSERT INTO `Ente`(`id`, `nome`, `email`, `tel`, `regione`, `citta`) VALUES (%s,%s,%s,%s,%s,%s)",
             (
                 lastid,
@@ -159,7 +162,7 @@ class Query:
     def getInfoUtente(self,username):
         self._cursor.execute("SELECT u.*, l.username, l.tipo as utenza FROM Login l JOIN Utente u on u.id=l.id WHERE username = %s and l.tipo='utente'", (username),)
         data = self._cursor.fetchone()
-        if data == None:
+        if data is None:
             return False
         foto =getFileEncode("proPic/",self.getUserId(username))
         data["foto"] = foto if foto!=False else None
@@ -184,15 +187,14 @@ class Query:
 
         self._cursor.execute("SELECT salt, tipo FROM Login WHERE username = %s",(username))
         login = self._cursor.fetchone()
-        print(login)
 
-        if login == None: 
+        if login is None: 
             return False
-        
+
         salt = login["salt"]
         self._cursor.execute("select username from Login where pass=md5(%s)",(data["_oldpsw"]+salt))
         check=self._cursor.fetchone()
-        if check == None:
+        if check is None:
             return -1
         check=check.get("username", None)
         if username == check:
@@ -207,7 +209,7 @@ class Query:
     def getInfoImpresa(self,username):
         self._cursor.execute("SELECT i.*, l.username, l.tipo as utenza FROM Login l JOIN Impresa i on i.id=l.id WHERE username = %s and l.tipo='impresa'", (username),)
         data = self._cursor.fetchone()
-        if data == None:
+        if data is None:
             return False
         foto =getFileEncode("proPic/",self.getUserId(username))
         data["foto"] = foto if foto!=False else None
@@ -216,7 +218,7 @@ class Query:
     def getInfoEnte(self,username):
         self._cursor.execute("SELECT e.*, l.username, l.tipo as utenza FROM Login l JOIN Ente e on e.id=l.id WHERE username = %s and l.tipo='ente'", (username),)
         data = self._cursor.fetchone()
-        if data == None:
+        if data is None:
             return False
         foto =getFileEncode("proPic/",self.getUserId(username))
         data["foto"] = foto if foto!=False else None
@@ -225,14 +227,14 @@ class Query:
     def getUserBudget(self, username):
         self._cursor.execute("SELECT s.andron FROM Login l JOIN Saldo s on s.id=l.id WHERE l.username=%s", (username))
         data= self._cursor.fetchone()
-        if data == None:
+        if data is None:
             return False
         return data
 
     def getUserId(self,username):
         self._cursor.execute("SELECT id FROM Login WHERE username=%s", (username))
         userId=self._cursor.fetchone().get("id", None)
-        if userId == None:
+        if userId is None:
             return False
         return userId
 
@@ -240,7 +242,7 @@ class Query:
         self._cursor.execute("SELECT tipo FROM Login WHERE username = %s", (username),)
         tipo=self._cursor.fetchone().get("tipo", None)
 
-        if tipo == None:
+        if tipo is None:
             return False
         return tipo
 
@@ -259,7 +261,7 @@ class Query:
     def getTransaction(self,id):
         self._cursor.execute("SELECT * FROM Transazioni WHERE id=%s",(id))
         transazione = self._cursor.fetchone()
-        if transazione==None:
+        if transazione is None:
             return False
         self._cursor.execute("SELECT nome FROM Utente WHERE id=%(id)s UNION SELECT nome FROM Ente WHERE id=%(id)s UNION SELECT nome FROM Impresa WHERE id=%(id)s",{"id" : transazione["emittente"]})
         transazione["emittente"] = self._cursor.fetchone().get("nome")
@@ -364,7 +366,6 @@ class Query:
             )
         )
         orario = data["_data"].split("T")[1].split(".")[0]
-        print(orario)
         self._cursor.execute(
             "INSERT INTO `Richieste`(`richiedente`, `esponente`, `servizio`, `messaggio`, `data`,`orario` ,`ore`) VALUES (%s, %s, %s, %s, %s, %s, %s)",
             (
@@ -373,10 +374,11 @@ class Query:
                 id,
                 data["_msg"],
                 data["_data"],
-                orario[0:5],
-                data["_ore"]
-            )
+                orario[:5],
+                data["_ore"],
+            ),
         )
+
 
         return True
 
@@ -393,7 +395,7 @@ class Query:
         self._cursor.execute("SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente WHERE r.id = %s AND r.richiedente = %s UNION SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente WHERE r.id = %s AND r.esponente= %s", (id, idUtente, id, idUtente))
         richiesta = self._cursor.fetchone()
 
-        if richiesta == None:
+        if richiesta is None:
             return False
 
         self._cursor.execute("UPDATE Richieste SET stato=%s WHERE id= %s", (stato,id))
@@ -401,17 +403,16 @@ class Query:
 
     def deleteMyRequest(self, username, id):
         idUtente=self.getUserId(username)
-        self._cursor.execute("SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente WHERE r.id = %s AND r.richiedente = %s UNION SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente JOIN Servizi s on r.servizio=s.id WHERE r.id = %s AND r.esponente= %s", (id, idUtente, id, idUtente))
+        self._cursor.execute("SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente WHERE r.id = %s AND r.richiedente = %s UNION SELECT * FROM Richieste r JOIN Utente u on u.id=r.richiedente WHERE r.id = %s AND r.esponente= %s", (id, idUtente, id, idUtente))
         richiesta = self._cursor.fetchone()
-        if richiesta == None:
+        if richiesta is None:
             return False
-
         self._cursor.execute("UPDATE Richieste SET stato='eliminato' WHERE id= %s", (id))
-
         self._cursor.execute("SELECT ore FROM Richieste WHERE id=%s",(id))
-        andron = self.getAndronCostFromService(richiesta["andron"]) * int(self._cursor.fetchone()["ore"])
+        ore = self._cursor.fetchone()["ore"]
+        andron = self.getAndronCostFromService(richiesta["servizio"]) * int(ore)
 
-        causale = "Rimborso di "+str(andron)+" Andron all'utente " + richiesta["nome"] + " " + str(richiesta["cognome"]) +" (ID-"+ str(idUtente) +") per l'annullamento della richiesta R-"+str(id) 
+        causale = "Rimborso di "+str(andron)+" Andron all'utente " + richiesta["nome"] + " " + str(richiesta["cognome"]) +" (ID-"+ str(idUtente) +") per l'annullamento della richiesta R-"+str(id)
         self._cursor.execute(
             "INSERT INTO `Intermediario`(`utente`,`andron`, `causale`) VALUES (%s,%s,%s)",
             (
@@ -447,7 +448,7 @@ class Query:
         self._cursor.execute("UPDATE Saldo SET andron=andron+%s WHERE id = %s",(andron,dati["utente"]))
         
         causale="Esecuzione del Servizio: " + dati["nome"]
-
+        print("ciao")
         self._cursor.execute("INSERT INTO Transazioni (andron, emittente, ricevente, causale) VALUES (%s,%s,%s,%s)",
             (
                 andron,
@@ -456,7 +457,7 @@ class Query:
                 causale,
             )
         )
-
+        print("ciao")
         self._cursor.execute("INSERT INTO `FeedbackServizi`(`richiesta`,`valutazione`, `messaggio`, `da`, `a`) VALUES (%s,%s,%s,%s,%s)",
             (
                 id,
@@ -479,14 +480,14 @@ class Query:
         self._cursor.execute("SELECT * FROM Richieste WHERE id = %s AND richiedente = %s AND segnalazioneRichiedente = 0 UNION SELECT * FROM Richieste r WHERE r.id = %s AND r.esponente= %s AND sagnalazioneEsponente = 0", (data["id"], segnalatore, data["id"], segnalatore))
         richiesta = self._cursor.fetchone()
 
-        if richiesta == None:
+        if richiesta is None:
             return False
 
         if segnalatore == richiesta["richiedente"]:
             self._cursor.execute("UPDATE Richieste SET segnalazioneRichiedente = 1 WHERE id=%s",(data["id"]))
         else:
             self._cursor.execute("UPDATE Richieste SET sagnalazioneEsponente = 1 WHERE id=%s",(data["id"]))
-        
+
         self._cursor.execute("INSERT INTO SegnalazioniServizi (richiesta,messaggio,da,a) VALUES (%s,%s,%s,%s)",
             (
                 data["id"],
@@ -522,7 +523,8 @@ class Query:
         return data
 
     def addProducts(self,username,data):
-        #! data -> [nome, marca, descrizione, foto, prezzo, categoria, tipo, quantita]
+        print(data)
+        #! data -> [nome, marca, descrizione, foto, prezzo, categoria, quantita]
         self._cursor.execute("INSERT INTO `Beni`(`impresa`, `nome`, `marca`, `descrizione`, `categoria`, `andron`, `quantita`) VALUES (%s,%s,%s,%s,%s,%s,%s)",
             (
                 self.getUserId(username),
@@ -563,18 +565,12 @@ class Query:
     def getProductsFiltered(self,username,data):
         #! data -> [_page, _psize, termine, min, max]
         offset=int(data.get("_page"))*int(data.get("_psize"))
-        minimo = 0
-        massimo = 1000000
         termine='%'+data.get("termine")+'%'
 
         if data.get("termine")=="null":
             termine=''
-        if data.get("min")=="null":
-            minimo=0
-        if data.get("max")=="null":
-            massimo=10000000
-
-        print(termine, minimo, massimo)
+        minimo = 0 if data.get("min")=="null" else 0
+        massimo = 10000000 if data.get("max")=="null" else 1000000
         self._cursor.execute("SELECT b.*, i.nome as fornitore FROM Beni b JOIN Impresa i ON i.id=b.impresa WHERE (eliminato = 0 AND accettato = 1 AND impresa != %s) and (b.nome LIKE %s or b.descrizione like %s or b.categoria like %s or b.marca like %s) and (b.andron>%s and b.andron<%s) LIMIT %s OFFSET %s", 
             (
                 self.getUserId(username),
@@ -590,30 +586,31 @@ class Query:
         return data
 
     def buyProducts(self, username, data):
-        if data==None:
+        if data is None:
             return False
 
         idUtente = self.getUserId(username)
         for i in data:
-            #! i -> [idProdotto, nomeProdotto, prezzo, quantita]
+            #! i -> [idProdotto, name, prezzo, quantita]
             #! Controllo Quantità
-            self._cursor.execute("SELECT quantita, nome, impresa FROM Beni WHERE id = %s ", (i["idProdotto"]))
-            
+            self._cursor.execute("SELECT quantita, nome, impresa, andron FROM Beni WHERE id = %s ", (i["id"]))
+
             dati = self._cursor.fetchone()
             idImpresa = dati["impresa"]
             quantitaDisponibile = dati["quantita"]
-            if quantitaDisponibile==None or quantitaDisponibile < i["quantita"]:
+            costo = dati["andron"]
+            if quantitaDisponibile is None or quantitaDisponibile < i["quantity"]:
                 return {"messaggio":"Quantità del prodotto " + str(dati["nome"])+ " non disponibile. Massimo "+ str(quantitaDisponibile) +" pezzi/o", "status":-1}
 
-            tot = int(i["quantita"]) * int(i["prezzo"])
-            causale= "Acquisto di " + str(i["quantita"]) + " pezzo/pezzi del prodotto " + i["nomeProdotto"]
+            tot = int(i["quantity"]) * int(costo)
+            causale= "Acquisto di " + str(i["quantity"]) + " pezzo/pezzi del prodotto " + i["name"]
 
             #!Rimuovi Token da utente
             self._cursor.execute("UPDATE Saldo SET andron = (andron - %s) WHERE id = %s",(tot,idUtente))
             #!Aggiungi Token ad Impresa
             self._cursor.execute("UPDATE Saldo SET andron = (andron + %s) WHERE id = %s",(tot,idImpresa))
             #!Rimuovo quantita' dal prodotto
-            self._cursor.execute("UPDATE Beni SET quantita = (quantita - %s) WHERE id=%s",(i["quantita"],i["idProdotto"]))
+            self._cursor.execute("UPDATE Beni SET quantita = (quantita - %s) WHERE id=%s",(i["quantity"],i["id"]))
 
             #!Crea transazione
             self._cursor.execute("INSERT INTO Transazioni (andron, emittente, ricevente, causale) VALUES (%s,%s,%s,%s)",
@@ -631,8 +628,8 @@ class Query:
                 transazione,
                 idUtente,
                 idImpresa,
-                i["idProdotto"],
-                i["quantita"],
+                i["id"],
+                i["quantity"],
                 False,
             ))
 
@@ -643,7 +640,6 @@ class Query:
     def getOrders(self, username):
         self._cursor.execute("SELECT l.username as usernameUtente, o.id, o.transazione, o.checkOrdine, o.quantita,b.id as idBene, b.nome as nomeBene FROM Ordini o JOIN Beni b on b.id=o.bene JOIN Login l on l.id=o.utente WHERE o.impresa = %s AND o.checkOrdine=0 ORDER BY o.id DESC", (self.getUserId(username)))
         data = self._cursor.fetchall()
-        print(data)
         for order in data:
             usertype = self.getUserType(order["usernameUtente"])
             idUtente = self.getUserId(order["usernameUtente"])
@@ -710,7 +706,7 @@ class Query:
         #! data -> [_page, _psize, id]
         offset=int(data.get("_page"))*int(data.get("_psize"))
         dati = {}
-        
+
         self._cursor.execute("SELECT fs.id, fs.valutazione, fs.messaggio, s.nome, u.nome as recensore FROM FeedbackServizi fs JOIN Richieste r on r.id=fs.richiesta JOIN Servizi s on r.servizio=s.id JOIN Utente u on fs.da=u.id WHERE fs.a=%s LIMIT %s OFFSET %s",
             (
                 data.get("id"),
@@ -718,19 +714,19 @@ class Query:
                 offset
             )
         )
-        
+
         dati["_msg"] = self._cursor.fetchall()
 
         self._cursor.execute("SELECT AVG(valutazione) as media FROM FeedbackServizi WHERE a = %s",(data.get("id")))
         media= self._cursor.fetchone().get("media",None)
-        dati["_media"] = int(3 if media == None else media)
+        dati["_media"] = int(3 if media is None else media)
         return dati
     
     def feedbackCompany(self, data):
         #! data -> [_page, _psize, id]
         offset=int(data.get("_page"))*int(data.get("_psize"))
         dati = {}
-        
+
         self._cursor.execute("SELECT l.username, fo.id, fo.valutazione, fo.messaggio, o.quantita, b.nome  FROM Ordini o join FeedbackOrdini fo on o.id=fo.ordine JOIN Beni b on o.bene=b.id JOIN Login l on l.id=fo.da WHERE fo.a=%s LIMIT %s OFFSET %s",
             (
                 data.get("id"),
@@ -752,7 +748,7 @@ class Query:
 
         self._cursor.execute("SELECT AVG(valutazione) as media FROM FeedbackOrdini WHERE a = %s",(data.get("id")))
         media= self._cursor.fetchone().get("media",None)
-        dati["_media"] = int(3 if media == None else media)
+        dati["_media"] = int(3 if media is None else media)
 
         return dati
 
@@ -767,8 +763,8 @@ class Query:
     def addServiceCommunity(self, username, data):
         #!data -> [msg, date,bisognoSegnalato, idBisogno, idEnte]
         data["idBisogno"]=  None if data["idBisogno"] == 0 else data["idBisogno"]
-        giorno = data["date"].split("T")[0] 
-        ora = data["date"].split("T")[1].split(".")[0]
+        giorno = data["date"] 
+        ora = 0
         self._cursor.execute("INSERT INTO `ServiziComunita`(`utente`, `ente`, `messaggio`, `data`, `orario`, `richiestaBisogno`, `bisogno`) VALUES (%s,%s,%s,%s,%s,%s,%s)",
             (
                 self.getUserId(username),
@@ -809,7 +805,6 @@ class Query:
         return data
         
     def confirmServiceCommunity(self,username, id):
-        print(id)
         self._cursor.execute("UPDATE ServiziComunita SET certificato = 1 WHERE id = %s and ente = %s",(id,self.getUserId(username)))
 
         percentuale=int(self.getPercentualeETS())
@@ -825,7 +820,6 @@ class Query:
         return True
 
     def refuseServiceCommunity(self,username, id):
-        print(id)
         self._cursor.execute("UPDATE ServiziComunita SET rifiutato = 1 WHERE id = %s and ente = %s",(id,self.getUserId(username)))
         return True
 #endregion
@@ -879,24 +873,21 @@ class Query:
         username=data["login"]
         self._cursor.execute("SELECT salt FROM notAdministration WHERE login = %s",(username))
         login = (self._cursor.fetchone())
-        if login == None: 
+        if login is None: 
             return False
-        
+
         salt = login["salt"]
         self._cursor.execute("select login from notAdministration where password=md5(%s)",(data["password"]+salt))
         check=self._cursor.fetchone()
-        if check == None:
+        if check is None:
             return False
         check=check.get("login", None)
-        if username == check:
-            return True
-        return False
+        return username == check
         
     def isAdmin(self,data):
         return True
 
     #region #!Settings
-    '''#!SPOSTATO
     def setAndronHour(self,settings):
         self._cursor.execute("UPDATE notAdministration SET JsonValue= JSON_SET(JsonValue, '$.andron', %s)",(settings["andron"]))
         return True
@@ -918,7 +909,6 @@ class Query:
     def getSettings(self):
         self._cursor.execute("SELECT JsonValue AS 'result' FROM `notAdministration`")
         return self._cursor.fetchone()["result"]
-    '''
 
     #endregion 
 
@@ -926,6 +916,7 @@ class Query:
     #region #! Account Utenti
     def activateAccount(self,id):
         self._cursor.execute("UPDATE Utente SET attivo = 1 WHERE id = %s", (id))
+        self._cursor.execute("INSERT INTO Saldo (id, andron) VALUES (%s,%s)", (id, self.getAndronHour())) # Da togliere nella versione con blockchain
         self._cursor.execute("SELECT nome,cognome FROM `Utente` where id =%s", (id))
         return self._cursor.fetchone()
     
@@ -948,6 +939,7 @@ class Query:
 
     def activateImpresa(self,id):
         self._cursor.execute("UPDATE Impresa SET attivo = 1 WHERE id = %s", (id))
+        self._cursor.execute("INSERT INTO Saldo (id, andron) VALUES (%s,%s)", (id, self.getAndronHour())) # Da togliere nella versione con blockchain
         self._cursor.execute("SELECT i.nome, l.username FROM `Impresa` as i JOIN Login as l on l.id=i.id where i.id =%s", (id))
         return self._cursor.fetchone()
     
@@ -981,7 +973,6 @@ class Query:
         return True
 
     def refuseProduct(self,id):
-        print(id)
         self._cursor.execute("UPDATE Beni SET rifiutato=1 WHERE id=%s",(id))
         return True
 
@@ -1058,7 +1049,7 @@ class Query:
     
 
     def concludiSegnalazioneServizio(self,idRichiesta,idEsponente):
-        self._cursor.execute("SELECT r.ore, s.andron FROM Richieste r JOIN Servizi s on s.id=r.servizio WHERE id=%s",(idRichiesta))
+        self._cursor.execute("SELECT r.ore, s.andron FROM Richieste r JOIN Servizi s on s.id=r.servizio WHERE r.id=%s",(idRichiesta))
         dati = self._cursor.fetchone()
         andron = int(dati["ore"])*int(dati["andron"])
 
@@ -1069,7 +1060,7 @@ class Query:
         return True
 
     def rimborsaSegnalazioneServizio(self,idRichiesta, idRichiedente):
-        self._cursor.execute("SELECT r.ore, s.andron FROM Richieste r JOIN Servizi s on s.id=r.servizio WHERE id=%s",(idRichiesta))
+        self._cursor.execute("SELECT r.ore, s.andron FROM Richieste r JOIN Servizi s on s.id=r.servizio WHERE r.id=%s",(idRichiesta))
         dati = self._cursor.fetchone()
         andron = int(dati["ore"])*int(dati["andron"])
 

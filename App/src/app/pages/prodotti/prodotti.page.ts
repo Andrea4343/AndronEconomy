@@ -44,7 +44,7 @@ export class ProdottiPage {
             }
 
             this.request.put({
-              path:"/products/mine"+id,
+              path:"/products/mine/"+id,
               data:{ quantita : data.quantita },
               handler:()=>{
                 this.utilities.simplyAlert({
