@@ -83,8 +83,8 @@ let NuovoServizioPage = class NuovoServizioPage {
         this.utilities = utilities;
         this.formBuilder = formBuilder;
         this.newServiceForm = this.formBuilder.group({
-            nome: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].maxLength(50), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(5)], this.utilities.validatorNotEmpty],
-            descrizione: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].maxLength(500), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(5)], this.utilities.validatorNotEmpty],
+            nome: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].maxLength(50), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(5), this.utilities.validatorNotEmpty]],
+            descrizione: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].maxLength(500), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].minLength(5), this.utilities.validatorNotEmpty]],
             ore: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].max(5), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].min(1), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].pattern("^[0-9]+$")]],
             preavviso: ['', [_angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].required, _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].max(14), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].min(1), _angular_forms__WEBPACK_IMPORTED_MODULE_7__["Validators"].pattern("^[0-9]+$"),]],
         });
@@ -124,6 +124,9 @@ let NuovoServizioPage = class NuovoServizioPage {
     }
     get preavviso() {
         return this.newServiceForm.get("preavviso");
+    }
+    test() {
+        console.log(this.newServiceForm.valid);
     }
     submit() {
         let servizio = {

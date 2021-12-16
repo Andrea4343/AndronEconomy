@@ -522,6 +522,8 @@
         }, {
           key: "submit",
           value: function submit() {
+            var _this = this;
+
             this.errore = "";
 
             if (this.foto == null) {
@@ -534,7 +536,7 @@
               _password: this.registerImpresaForm.value.password,
               _nome: this.registerImpresaForm.value.nome,
               _tipo: this.registerImpresaForm.value.tipo,
-              _iva: this.registerImpresaForm.value.iva,
+              _iva: this.registerImpresaForm.value.piva,
               _cf: this.registerImpresaForm.value.cf.toUpperCase(),
               _telefono: this.registerImpresaForm.value.telefono,
               _mail: this.registerImpresaForm.value.email,
@@ -546,41 +548,43 @@
               _accountType: "impresa",
               _foto: this.foto
             };
-            /*
+            console.log(data);
             this.request.post({
-              path:"/register",
+              path: "/register",
               data: data,
-              handler:()=>{
-                this.utilities.simplyAlert({
-                  operation:()=>{this.navCtrl.navigateForward("/login")},
-                  header:"Operazione effettuata",
-                  message:"Registrazione avvenuta con successo."
-                })
+              handler: function handler() {
+                _this.utilities.simplyAlert({
+                  operation: function operation() {
+                    _this.navCtrl.navigateForward("/login");
+                  },
+                  header: "Operazione effettuata",
+                  message: "Registrazione avvenuta con successo."
+                });
               },
-              error:(error)=>{
-                if(error.status==401){
-                  this.errore="Username già in uso."
-                }
-                else{
-                  this.utilities.alertError({
-                    handler:()=>{this.navCtrl.navigateForward("/login")},
-                    message:"Errore",
-                    header:"Si è verificato un errore nella registrazione. Riprova più tardi."
-                  })
+              error: function error(_error) {
+                if (_error.status == 401) {
+                  _this.errore = "Username già in uso.";
+                } else {
+                  _this.utilities.alertError({
+                    handler: function handler() {
+                      _this.navCtrl.navigateForward("/login");
+                    },
+                    message: "Errore",
+                    header: "Si è verificato un errore nella registrazione. Riprova più tardi."
+                  });
                 }
               }
-            })
-            */
+            });
           }
         }, {
           key: "chooseImage",
           value: function chooseImage() {
-            var _this = this;
+            var _this2 = this;
 
             var $event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
             this.plugin.chooseIm($event, function (imgPath) {
-              _this.imgSrc = 'data:image/jpeg;base64,' + imgPath;
-              _this.foto = imgPath;
+              _this2.imgSrc = 'data:image/jpeg;base64,' + imgPath;
+              _this2.foto = imgPath;
             });
           }
         }]);

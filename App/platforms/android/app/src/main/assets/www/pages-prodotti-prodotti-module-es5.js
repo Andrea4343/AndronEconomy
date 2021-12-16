@@ -200,7 +200,7 @@
                   }
 
                   _this.request.put({
-                    path: "/products/mine" + id,
+                    path: "/products/mine/" + id,
                     data: {
                       quantita: data.quantita
                     },

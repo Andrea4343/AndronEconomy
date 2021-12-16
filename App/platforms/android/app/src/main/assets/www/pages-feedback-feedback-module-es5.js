@@ -311,7 +311,7 @@
                         message: "Vuoi confermare questo servizio?",
                         handlerYes: function handlerYes() {
                           _this.request.post({
-                            path: "/request/mine/" + id,
+                            path: "/requests/mine/" + id,
                             data: {
                               "_msg": _this.msg,
                               "_valutazione": _this.valutazione
@@ -385,7 +385,7 @@
                         header: "Attenzione",
                         message: "Vuoi confermare questo ordine?",
                         handlerYes: function handlerYes() {
-                          _this2.request.post({
+                          _this2.request.put({
                             path: "/orders/mine/" + _this2.data.id,
                             data: {
                               "_a": _this2.data.nodoImpresa,

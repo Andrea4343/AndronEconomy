@@ -560,7 +560,8 @@
               _citta: this.registerUserForm.value.citta,
               _via: this.registerUserForm.value.via,
               _cap: this.registerUserForm.value.cap,
-              _foto: this.foto
+              _foto: this.foto,
+              _accountType: "utente"
             };
             this.request.post({
               path: "/register",

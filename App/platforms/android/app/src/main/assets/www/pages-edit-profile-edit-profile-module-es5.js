@@ -528,9 +528,7 @@
                               return;
                             }
 
-                            return;
-
-                            _this3.request.put({
+                            return _this3.request.put({
                               path: "/info/changePassword",
                               data: {
                                 "_oldpsw": data.vecchiapassword,

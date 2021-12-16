@@ -1549,8 +1549,10 @@ ion-card-content {
   padding-left: 20px;
 }
 ion-img {
-  height: 30vh;
+  height: auto;
   width: auto;
+  max-width: 50px;
+  max-height: 50px;
   margin: auto;
   display: block;
 }

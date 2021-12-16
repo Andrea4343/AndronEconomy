@@ -133,7 +133,7 @@ let HomePage = class HomePage {
                 message: "Vuoi davvero confermare l'evasione dell'ordine? Non sarà possibile annulare l'operazione",
                 handlerYes: () => {
                     this.request.put({
-                        path: "/orders" + id,
+                        path: "/orders/" + id,
                         handler: () => {
                             this.utilities.simplyAlert({
                                 operation: () => { this.searchOrdini(); },

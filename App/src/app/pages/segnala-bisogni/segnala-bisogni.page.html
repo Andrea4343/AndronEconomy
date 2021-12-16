@@ -49,7 +49,7 @@
         </ng-container>
       </div>
 
-      <ion-card *ngIf="mobile" style="background-color:rgb(29, 39, 61)">
+      <ion-card *ngIf="this.plugin.mobile()" style="background-color:rgb(29, 39, 61)">
           <ion-card-content>
             Se ti trovi sul luogo clicca sul pulsante sottostante per recuperare la posizione!
           </ion-card-content>

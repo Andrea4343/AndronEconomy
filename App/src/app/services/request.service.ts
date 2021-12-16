@@ -6,16 +6,16 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http"
 })
 export class RequestService {
   
-  private url = "http://localhost:5001";
+  private url = "http://192.168.1.53:5001";
   public token : string;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
 
   createAuthHeader(){
     let headers= new HttpHeaders({
         'Authorization': 'Bearer ' + this.token,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
     })
     return headers
   }

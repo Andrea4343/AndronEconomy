@@ -237,7 +237,7 @@
                         message: "Vuoi davvero confermare l'evasione dell'ordine? Non sarà possibile annulare l'operazione",
                         handlerYes: function handlerYes() {
                           _this3.request.put({
-                            path: "/orders" + id,
+                            path: "/orders/" + id,
                             handler: function handler() {
                               _this3.utilities.simplyAlert({
                                 operation: function operation() {

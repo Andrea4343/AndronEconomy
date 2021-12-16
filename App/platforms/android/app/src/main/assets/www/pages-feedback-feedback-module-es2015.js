@@ -164,7 +164,7 @@ let FeedbackPage = class FeedbackPage {
                 message: "Vuoi confermare questo servizio?",
                 handlerYes: () => {
                     this.request.post({
-                        path: "/request/mine/" + id,
+                        path: "/requests/mine/" + id,
                         data: {
                             "_msg": this.msg,
                             "_valutazione": this.valutazione
@@ -205,7 +205,7 @@ let FeedbackPage = class FeedbackPage {
                 header: "Attenzione",
                 message: "Vuoi confermare questo ordine?",
                 handlerYes: () => {
-                    this.request.post({
+                    this.request.put({
                         path: "/orders/mine/" + this.data.id,
                         data: {
                             "_a": this.data.nodoImpresa,

@@ -365,7 +365,7 @@ let RegisterImpresaPage = class RegisterImpresaPage {
             _password: this.registerImpresaForm.value.password,
             _nome: this.registerImpresaForm.value.nome,
             _tipo: this.registerImpresaForm.value.tipo,
-            _iva: this.registerImpresaForm.value.iva,
+            _iva: this.registerImpresaForm.value.piva,
             _cf: this.registerImpresaForm.value.cf.toUpperCase(),
             _telefono: this.registerImpresaForm.value.telefono,
             _mail: this.registerImpresaForm.value.email,
@@ -377,31 +377,30 @@ let RegisterImpresaPage = class RegisterImpresaPage {
             _accountType: "impresa",
             _foto: this.foto
         };
-        /*
+        console.log(data);
         this.request.post({
-          path:"/register",
-          data: data,
-          handler:()=>{
-            this.utilities.simplyAlert({
-              operation:()=>{this.navCtrl.navigateForward("/login")},
-              header:"Operazione effettuata",
-              message:"Registrazione avvenuta con successo."
-            })
-          },
-          error:(error)=>{
-            if(error.status==401){
-              this.errore="Username già in uso."
+            path: "/register",
+            data: data,
+            handler: () => {
+                this.utilities.simplyAlert({
+                    operation: () => { this.navCtrl.navigateForward("/login"); },
+                    header: "Operazione effettuata",
+                    message: "Registrazione avvenuta con successo."
+                });
+            },
+            error: (error) => {
+                if (error.status == 401) {
+                    this.errore = "Username già in uso.";
+                }
+                else {
+                    this.utilities.alertError({
+                        handler: () => { this.navCtrl.navigateForward("/login"); },
+                        message: "Errore",
+                        header: "Si è verificato un errore nella registrazione. Riprova più tardi."
+                    });
+                }
             }
-            else{
-              this.utilities.alertError({
-                handler:()=>{this.navCtrl.navigateForward("/login")},
-                message:"Errore",
-                header:"Si è verificato un errore nella registrazione. Riprova più tardi."
-              })
-            }
-          }
-        })
-      */
+        });
     }
     chooseImage($event = null) {
         this.plugin.chooseIm($event, (imgPath) => {
