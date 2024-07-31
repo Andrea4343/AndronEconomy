@@ -16,6 +16,7 @@
 
     ```bash
     git clone https://github.com/marcogarofal/AndronEconomy.git
+    cd AndronEconomy/
     ```
 
 2. Switch to the branch:
