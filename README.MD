@@ -35,7 +35,7 @@
 2. Configure the database:
 
     ```bash
-    cd Altro/DUMP\ DB/DUMP/
+    cd Altro/
     sudo mysql -u root
     ```
 
@@ -50,7 +50,7 @@
 3. Import the SQL dump:
 
     ```bash
-    sudo mysql -u root Andron < dump.sql
+    sudo mysql -u root Andron < dump_3.sql
     ```
 
 4. Configure the MySQL user:
