@@ -7,6 +7,8 @@
   </ion-toolbar>
 </ion-header>
 
+<div class="background-color"></div>
+
 <ion-content>
           
   <ion-card>
@@ -23,9 +25,9 @@
   </ion-card>
 
   <div id="transaction">
-    <h5 style="color:black" >Transazioni</h5>
+    <h5 style="color:white" >Transazioni</h5>
     <ion-list>
-      <ion-card style="background-color:rgb(29, 39, 61)" *ngIf="transactions?.length==0">
+      <ion-card  *ngIf="transactions?.length==0">
         <ion-card-header>
           <ion-card-subtitle>
             <div class="ion-text-center">

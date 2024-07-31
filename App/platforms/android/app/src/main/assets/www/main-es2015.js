@@ -114,7 +114,8 @@ __webpack_require__.r(__webpack_exports__);
 let RequestService = class RequestService {
     constructor(http) {
         this.http = http;
-        this.url = "http://192.168.1.53:5001";
+        //this.url = "http://192.168.1.53:5001";
+        this.url = "http://127.0.0.1:5001";
     }
     createAuthHeader() {
         let headers = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]({

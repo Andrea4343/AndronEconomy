@@ -3,7 +3,7 @@ import { NavController } from '@ionic/angular';
 import { PluginService } from 'src/app/services/plugin.service';
 import { RequestService } from 'src/app/services/request.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ValidatorFn, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register-impresa',
@@ -118,7 +118,7 @@ export class RegisterImpresaPage {
       { type: "minlength", message: this.defaultMessages.minlength(this.varLength.tipo.min) },
     ],
     piva: [
-      { type: "required",  message: this.defaultMessages.required},
+      /*{ type: "required",  message: this.defaultMessages.required}, */
       { type: "pattern", message: "Il formato della partita iva non è corretto"}
     ],
     cf: [
@@ -195,14 +195,14 @@ export class RegisterImpresaPage {
                   ]
           ],
     piva:     ['', [
-                    Validators.required,
+                    /*Validators.required,*/
                     Validators.pattern("^[0-9]{11}$")
                   ]
               ],
-    cf:       ['', [
+    cf:       ['', /*[
                     Validators.required,
                     this.utilities.validatorCF //invaliCF
-                  ]
+                  ]*/ [Validators.required, this.codiceFiscaleValidator()]
               ],
     telefono: ['', [
                     Validators.required,
@@ -318,5 +318,22 @@ export class RegisterImpresaPage {
         this.foto = imgPath
       }
     )
+  }
+
+  codiceFiscaleValidator(): ValidatorFn {
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      const cfPersonaFisicaRegex = /^[A-Z0-9]{16}$/i; // RegEx per CF persone fisiche
+      const partitaIvaRegex = /^[0-9]{11}$/; // RegEx per Partita IVA aziendale
+  
+      if (!control.value) {
+        // Se non c'è valore, non applichiamo nessuna validazione
+        return null;
+      }
+  
+      // Verifica se il valore inserito è un codice fiscale valido per persona fisica o azienda
+      const validCF = cfPersonaFisicaRegex.test(control.value) || partitaIvaRegex.test(control.value);
+      
+      return validCF ? null : { 'invalidCodiceFiscale': { value: control.value } };
+    };
   }
 }

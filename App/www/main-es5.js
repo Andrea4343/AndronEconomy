@@ -200,7 +200,8 @@
           _classCallCheck(this, RequestService);
 
           this.http = http;
-          this.url = "http://192.168.1.53:5001";
+          //this.url = "http://192.168.1.53:5001";
+          this.url = "http://127.0.0.1:5001";
         }
 
         _createClass(RequestService, [{

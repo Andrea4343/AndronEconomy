@@ -68,6 +68,12 @@ export class AppComponent {
       url: "/private/need",
       icon: ""
     }
+    ,
+    {
+      title: "Abbonamenti",
+      url: "/private/subscription",
+      icon: ""
+    }
   ]
 
 

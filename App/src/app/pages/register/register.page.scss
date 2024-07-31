@@ -1,0 +1,16 @@
+ion-item {
+    color: rgb(255, 255, 255);
+//    --border-color: white; // default underline color
+    --highlight-color-invalid: rgba(44,68,96,255); // invalid underline color
+    --highlight-color-valid: rgb(255, 255, 255); // valid underline color
+//    background-color: rgb(34, 34, 34);
+    background: transparent;
+
+    --border-color: white !important;
+    --highlight-color-focused: white !important;
+
+    --highlight-height: 0;
+    --highlight-color-focused: transparent;
+    --highlight-color-invalid: transparent;
+
+}

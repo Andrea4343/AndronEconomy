@@ -1,4 +1,6 @@
-<ion-header>
+
+
+<ion-header >
   <ion-toolbar>
     <ion-title>
       Home
@@ -9,25 +11,39 @@
   </ion-toolbar>
 </ion-header>
 
+
+
+
+<div class="background-color"></div>
+
 <ion-content *ngIf="this.utenza=='utente' || this.utenza=='ente'">
   <h3 class="ion-text-center">Saldo</h3>
   <ion-card>
     <ion-card-header>
       <ion-card-title>
        <div class="ion-text-center">
-         {{budget}} ANDRON
-       </div>
+        
+        <span>{{budget}} </span>
+        <img src="assets/simbolo_andron.png" alt="Andron" style="width: 2%; height: auto; vertical-align: middle; display: inline;">
+        
+        
+        
+       
+       
+       
+        </div>
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <div class="ion-text-center">Saldo disponibile al {{today}}.</div>
     </ion-card-content>
   </ion-card>
+  
 
-  <h3 class="ion-text-center">News</h3>
+  <h3 id="news-title" class="ion-text-center">News</h3>
  
   <ion-list>
-    <ion-card style="background-color: black;">
+    <ion-card >
       <ion-card-content>
         <ion-card-title class="ion-text-center">
           Titolo News...  
@@ -51,7 +67,7 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-card style="background-color: black;">
+    <ion-card >
       <ion-card-content>
         <ion-card-title class="ion-text-center">
           Titolo News...  

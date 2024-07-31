@@ -27,82 +27,225 @@
 @import '~animate.css/animate.min.css';
 
 
+html.ios {
+  --ion-default-font: -apple-system, BlinkMacSystemFont, "Futura", sans-serif !important;
+}
+html.md {
+  --ion-default-font: "Futura", sans-serif !important;
+}
+html {
+  --ion-font-family: "Futura", sans-serif !important;
+}
+body {
+  background: var(--ion-background-color);
+  font-family: 'Futura', sans-serif;
+}
 
+
+
+
+
+//menu
 ion-toolbar{
-    --ion-background-color:#555B6E;
-    color: rgb(254, 254, 255);
-    font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --ion-background-color:#3a567b;
+    color: rgb(255, 255, 255);
+    //font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Futura', sans-serif !important;
     text-transform: capitalize;
+    --background-image: none !important; /* Rimuove l'immagine di sfondo, se presente */
 }
 
-ion-content{
-    --ion-background-color: #FAF9F9;
-    --color: rgb(35, 38, 41);
+
+ion-content {
+    //--ion-background-color: #3a567b;
+    --ion-background-color: transparent;
+
+    --color: #ffffff;
+
+    background-image: url('assets/simbolo_andron.png');
+    background-size: 12%; /* Riduce le dimensioni dell'immagine al 50% rispetto al contenitore */
+  
+    //background-size: cover;
+    background-repeat: no-repeat;
+    //position: relative;
+    //background-position: center bottom;
+    background-position: center top 33%;
+
+    opacity: 0.7;
+    
 }
 
-ion-item{
-    --background-hover:#D5C7BC
+
+
+//ion-item{
+  //  --background-hover: Tomato;
+   // --color: white;
+//}
+
+
+
+ion-item {
+    --border-color: white !important;
+    --highlight-color-focused: white !important;
+
+    --highlight-height: 0;
+  --highlight-color-focused: transparent;
+  --highlight-color-invalid: transparent;
+  }
+
+ion-title{
+    --color: white;
 }
 
+
+
+/* Aggiungi uno sfondo al menu hamburger */
+.menu-content {
+    --background: #a81919; /* Colore di sfondo del contenuto principale */
+  
+  }
+
+
+
+
+ion-menu.menu-content {
+    /* Stili per il menu content qui */
+    background-color: #ffffff; /* Inserisci qui il colore desiderato per lo sfondo */
+  }
+
+  .ion-content.menu-open {
+    box-shadow: none;
+  }
 
 //rgb(140, 0, 255);
+//hamburger menu
+ion-menu {
+    --background: #3a567b; /* Imposta il colore di sfondo desiderato */
+    --background-image: none !important; /* Rimuove l'immagine di sfondo, se presente */
+    background-color: #2c4460;
+    background-image: none;
+  }
+
 ion-menu-button{
-    color: rgb(24, 19, 19);
+    --background: #3a567b !important; /* Colore di sfondo desiderato */
+    color: rgb(255, 255, 255) !important;
+    background-image: none !important;
+    
 }
 ion-back-button{
-    color: rgb(24, 19, 19);
+    color: rgb(255, 255, 255);
 }
 
 ion-buttons{
-    color: rgb(24, 19, 19);
+    color: rgb(255, 255, 255);
 }
-ion-card-title{
-    color: rgb(24, 16, 70);
-    text-transform: capitalize;
-}
+
+//ion-card-title{
+  //  color: rgb(140, 27, 152);
+   // text-transform: capitalize;
+   // text-align: center; /* Centra il testo orizzontalmente */
+//}
+
+ion-card-title {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 100% !important; /* Assicurati che il titolo occupi tutta l'altezza disponibile */
+  }
+ 
+  
+  
+  
+  
+
+
+
 p{
     color: white;
 }
 b{
-    color: rgb(144, 191, 223);
+    color: rgb(223, 176, 144);
 }
 ion-card-title{
-    color: rgb(99, 211, 231);
+    color: white;
     font-size:20px;
+    font-family: 'Futura', sans-serif !important;
 }
 ion-card-subtitle{
-    color: rgb(112, 108, 146);
+    color: white;width: 100%;
 }
-ion-card, ion-card-header, ion-card-content, ion-item, ion-grid, ion-row{
-    background-color: rgb(29, 39, 61);
+
+//ion-card, ion-card-header, ion-card-content, ion-item, ion-grid, ion-row{
+    ////background-color: #2c4460;
+    //background-color: #3a567b;
+    //color: white;
+//}
+
+ion-card-header, ion-card-content, ion-item,  ion-grid, ion-row, ion-card-subtitle{
+    ////background-color: #2c4460;
+    //background-color: #3a567b;
+    width: 100%;
+    //color: white;
 }
+
 ion-card-content{
-    color:rgb(162, 219, 224)
+    color:white
 }
 
 
 
+.background-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #3a567b; /* Colore di sfondo desiderato */
+    opacity: 1; /* Regola l'opacità del colore di sfondo per ottenere l'effetto desiderato */
+    z-index: -1;
+  }
+
+
+//importante per logo in logir e register
 #myContent{
-    --ion-background-color: #FAF9F9
+    //--ion-background-color: #3a567b;
+    background-color: transparent;
 }
+
+
+
+
+
+
+
+
+
 #myButtonYellow{
     --color: white;
-    --background: #0e448b;
-    --background-focused: #0e448b;
-    --background-hover: #0e448b;
+    --background: #3a567b;
+    --background-focused: #2c4460;
+    --background-hover: #2c4460;
     --color-activated: black;
     --color-focused: black;
     --color-hover: black;
+
+    --background-activated: transparent;
+    --border-color: transparent;
+    --box-shadow: none;
 }
 
 #myButtonViolet{
     --color: white;
-    --background: #7044ff;
+    --background: #3a567b;
     --background-focused: #633ce0;
     --background-hover: #633ce0;
     --color-activated: black;
     --color-focused: black;
     --color-hover: black;
+
+    --background-activated: transparent;
+    --border-color: transparent;
+    --box-shadow: none;
 }
 
 #imgpreview{
@@ -127,4 +270,53 @@ ion-img{
     
 }
 
+/* Centra il testo all'interno del card-title */
+ion-card-title div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
 
+ion-card, ion-card-header, ion-card-content, ion-item, ion-grid, ion-row{
+    //background-color: #2c4460;
+    background-color: #86a8d4;
+    color: white;
+    
+}
+
+
+
+
+  ion-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  ion-card {
+    max-width: 50% !important; /* O la percentuale desiderata */
+    //margin: 0 auto !important; /* Centra i card nella larghezza disponibile */
+    margin: 20px auto !important; 
+  }
+
+  #transaction {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra verticalmente i riquadri */
+    justify-content: center; /* Centra orizzontalmente i riquadri */
+    gap: 20px; /* Aggiunge spazio tra i riquadri */
+  }
+
+
+
+
+
+  /* Sovrascrivi lo stile dell'ombra del menu aperto */
+  .ios .menu-content-reveal,
+  [dir=rtl].ios .menu-content-reveal,
+  .md .menu-content-reveal {
+    box-shadow: none !important; /* Rimuovi completamente l'ombra */
+  }

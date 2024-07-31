@@ -3,9 +3,9 @@ p {
     text-align: center;
 }
 ion-item {
-    color: #457c8d;;
+    color: white;;
 //    --border-color: white; // default underline color
-    --highlight-color-invalid: red; // invalid underline color
+    --highlight-color-invalid: #2c4460; // invalid underline color
 }
 
 ion-item:hover{

@@ -1,17 +1,31 @@
 p {
-    color: red;
+    color: rgba(44,68,95,255);
     text-align: center;
 }
 ion-item {
-    color: rgb(24, 19, 19);
+    color: rgb(255, 255, 255);
 //    --border-color: white; // default underline color
     --highlight-color-invalid: red; // invalid underline color
-    --highlight-color-valid: rgb(24, 19, 19); // valid underline color
+    --highlight-color-valid: rgba(44,68,95,255); // valid underline color
 //    background-color: rgb(34, 34, 34);
 }
 
 ion-item:hover{
     background-color: rgb(38, 40, 71);
+}
+
+ion-button{
+    //color: rgb(255, 255, 255);
+    background-color: #2c4460;
+}
+
+ion-content {
+    --ion-background-color: #3a567b;
+    //--ion-background-color: transparent;
+
+    --color: #ffffff;
+    background-image: none;
+    
 }
 
 

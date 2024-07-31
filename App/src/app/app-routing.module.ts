@@ -118,6 +118,22 @@ const routes: Routes = [
     path: 'popover',
     loadChildren: () => import('./pages/popover/popover.module').then( m => m.PopoverPageModule)
   },
+  {
+    path: 'nuovo-abbonamento',
+    loadChildren: () => import('./pages/nuovo-abbonamento/nuovo-abbonamento.module').then( m => m.NuovoAbbonamentoPageModule)
+  },
+  {
+    path: 'abbonamenti',
+    loadChildren: () => import('./pages/abbonamenti/abbonamenti.module').then( m => m.AbbonamentiPageModule)
+  },
+  {
+    path: 'acquista-abbonamento',
+    loadChildren: () => import('./pages/acquista-abbonamento/acquista-abbonamento.module').then( m => m.AcquistaAbbonamentoPageModule)
+  },
+  {
+    path: 'abbonamenti-acquistati',
+    loadChildren: () => import('./pages/abbonamenti-acquistati/abbonamenti-acquistati.module').then( m => m.AbbonamentiAcquistatiPageModule)
+  },
 ];
 
 @NgModule({

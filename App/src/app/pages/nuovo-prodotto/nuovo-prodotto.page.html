@@ -7,6 +7,9 @@
   </ion-toolbar>
 </ion-header>
 
+
+<div class="background-color"></div>
+
 <ion-content id="myContent">
 
   <ion-list>
@@ -93,7 +96,7 @@
         
         <p class="error-message">{{this.errore}}</p>
 
-        <ion-button [disabled]="!newProductForm.valid" type="submit" expand="block">
+        <ion-button [disabled]="!newProductForm.valid" type="submit" expand="block" >
           Registra Prodotto
         </ion-button>
     </form>

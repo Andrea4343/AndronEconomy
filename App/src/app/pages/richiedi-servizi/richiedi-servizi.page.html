@@ -8,12 +8,15 @@
     </ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar (keyup.enter)="filter($event)" placeholder="Cerca"></ion-searchbar>
+    <ion-searchbar (keyup.enter)="filter($event)" placeholder="Cerca" style="color:white"></ion-searchbar>
   </ion-toolbar>
   <ion-toolbar *ngIf="filtro==true">
     <ion-button  size="small" expand="full" (click)="rimuoviFiltri()">Rimuovi filtro</ion-button>
   </ion-toolbar>
 </ion-header>
+
+<div class="background-color"></div>
+
 <ion-content>
   <ion-list>
     <ion-card style="background-color:rgb(29, 39, 61)" *ngIf="servizi?.length==0">

@@ -11,7 +11,8 @@ import { UtilitiesService } from 'src/app/services/utilities.service';
 export class BisogniPage {
 
   page:number = 0;
-  psize:number = 3;
+  psize:number = 50;
+  //era 3 in origine
   bisogni: any[] = [];
 
   constructor( private router: Router, private request: RequestService, private utilities : UtilitiesService) {

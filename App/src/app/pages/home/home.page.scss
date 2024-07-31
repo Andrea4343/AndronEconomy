@@ -8,3 +8,30 @@ ion-img{
 }
 
 
+#news-title {
+    margin-top: 15%; /* Aggiunge uno spazio sopra il titolo */
+    //margin-bottom: 10%; /* Aggiunge più spazio sotto il titolo per spostarlo più in basso */
+  }
+
+
+  ion-card, ion-card-header, ion-card-content, ion-item, ion-grid, ion-row{
+    //background-color: #2c4460;
+    background-color: #86a8d4;
+    color: white;
+    
+}
+
+/* Imposta la larghezza massima dei card in percentuale */
+//ion-card {
+  //max-width: 50%; /* Imposta la percentuale desiderata */
+//}
+
+/* Aggiunge uno spazio laterale ai card per separarli */
+//ion-card {
+  //margin: 20px auto; /* Aggiunge spazio sopra e sotto ai card e li centra nella larghezza disponibile */
+//}
+
+
+
+
+

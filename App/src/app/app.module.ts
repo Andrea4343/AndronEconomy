@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -30,6 +31,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
     AppRoutingModule,
     SearchFilterPageModule,
     CartModalPageModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     StatusBar,
