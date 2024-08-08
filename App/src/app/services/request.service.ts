@@ -6,9 +6,9 @@ import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http"
 })
 export class RequestService {
   
-  //private url = "http://192.168.1.53:5001";
-  //private url = "http://127.0.0.1:5001";
-  private url = "http://51.68.190.11:5001";
+  // private url = "http://192.168.1.53:5001";
+  private url = "http://127.0.0.1:5001";
+  // private url = "http://51.68.190.11:5001";
   public token : string;
 
   constructor(private http: HttpClient) {}
