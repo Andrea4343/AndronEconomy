@@ -10,7 +10,7 @@
 </ion-header>
 
 
-<div class="background-color">
+<div class="background-color"></div>
 <ion-content>
   <ion-list>
     <ion-card  *ngIf="bisogni?.length==0">
@@ -28,7 +28,6 @@
 
     <ion-card *ngFor="let b of bisogni">
       <ion-img src="{{ b.img }}"></ion-img>
-      <div id="content">
       <ion-card-header>
         <ion-card-subtitle>Segnalato da {{b["u.nome"]}} {{b.cognome}}</ion-card-subtitle>
         <ion-card-title>{{b.nome}}</ion-card-title>
@@ -41,7 +40,6 @@
         <ion-icon name="hand" slot="start"></ion-icon>
         <ion-label>Offri il tuo aiuto!</ion-label>
       </ion-item>
-      </div>
     </ion-card>
 
 
@@ -52,4 +50,3 @@
   </ion-list>
 
 </ion-content>
-</div>

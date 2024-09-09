@@ -225,9 +225,10 @@ ion-card-content{
     --background: #3a567b;
     --background-focused: #2c4460;
     --background-hover: #2c4460;
-    --color-activated: black;
-    --color-focused: black;
-    --color-hover: black;
+
+    --color-activated: white;
+    --color-focused: white;
+    --color-hover: white;
 
     --background-activated: transparent;
     --border-color: transparent;
@@ -260,11 +261,12 @@ ion-card-content{
     color: var(--ion-color-danger);
     padding-left: 20px;
 }
+
 ion-img{
     height: auto;
     width: auto;
-    max-width: 50px;
-    max-height: 50px;
+    max-width: 250px;
+    max-height:250px;
     margin: auto;
     display: block;
     

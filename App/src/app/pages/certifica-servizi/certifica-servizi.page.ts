@@ -65,7 +65,7 @@ export class CertificaServiziPage {
               message:"Servizio certificato correttamente!",
               operation:()=>{
                 this.page=0;
-                this.getServizi()
+                this.getServizi();
               },
             })
           },
