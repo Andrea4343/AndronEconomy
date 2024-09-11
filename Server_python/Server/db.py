@@ -692,7 +692,7 @@ class Query:
         offset=int(data.get("_page"))*int(data.get("_psize"))
 
         self._cursor.execute(
-            "SELECT b.*, i.nome as fornitore FROM Abbonamenti b JOIN Impresa i ON i.id=b.impresa WHERE i.id!= %s b.accettato = 1 AND b.eliminato = 0  and (b.nome LIKE %s or b.descrizione LIKE %s) ORDER BY b.id DESC LIMIT %s OFFSET %s",
+            "SELECT b.*, i.nome as fornitore FROM Abbonamenti b JOIN Impresa i ON i.id=b.impresa WHERE i.id!= %s AND b.accettato = 1 AND b.eliminato = 0  AND (b.nome LIKE %s or b.descrizione LIKE %s) ORDER BY b.id DESC LIMIT %s OFFSET %s",
             (
                 self.getUserId(username),
                 termine,
