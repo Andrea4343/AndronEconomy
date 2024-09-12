@@ -40,4 +40,10 @@ export class AbbonamentiAcquistatiPage  {
       }
     })
   }
+
+
+  loadmore(event) {
+    this.page++
+    this.getOrdiniAbbonamenti(()=>{event.target.complete()})
+  }
 }
